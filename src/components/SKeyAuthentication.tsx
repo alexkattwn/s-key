@@ -80,7 +80,7 @@ const SKeyAuthentication: React.FC = () => {
                 flex 
                 flex-col 
                 items-center 
-                gap-4
+                gap-6
                 bg-neutral-900
                 rounded-lg 
                 h-[100vh]
@@ -144,6 +144,7 @@ const SKeyAuthentication: React.FC = () => {
                     gap-4
                     py-6
                     max-[580px]:flex-col
+                    items-center
                 '
                 >
                     <input
