@@ -1,0 +1,19 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SHA-256 > snapshot 1`] = `
+{
+  "hash": "410e5a",
+}
+`;
+
+exports[`SHA-256 2 > snapshot 1`] = `
+{
+  "hash": "410e5a",
+}
+`;
+
+exports[`SHA-256 2v > snapshot 1`] = `
+{
+  "hash": "410e5a",
+}
+`;
