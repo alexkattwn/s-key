@@ -1,9 +1,9 @@
-import { lifeTime } from '@/components/SKeyAuthentication'
+import { lifeTime } from '@/components/TOTPAuthentication'
 import { checkIfPasswordUsed } from '@/helpers/localStorage.helper'
 import { millisecondsToSeconds } from '@/helpers/formatTime.helper'
 
 // Генерация одноразового пароля
-export async function generateOneTimePassword(
+export async function generateTOTPPassword(
     secret: string
 ): Promise<string | null> {
     // Получаем текущую временную метку в секундах
@@ -46,12 +46,12 @@ export async function generateOneTimePassword(
 }
 
 // Функция проверки пароля
-export async function verificationOneTimePassword(
+export async function verificationTOTPPassword(
     secret: string,
     password: string
 ): Promise<boolean> {
     // Генерируем новый пароль
-    const newPassword = await generateOneTimePassword(secret)
+    const newPassword = await generateTOTPPassword(secret)
     // Если сгенерированный пароль идентичен введенному
     if (newPassword === password) {
         return true

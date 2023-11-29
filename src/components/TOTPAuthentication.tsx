@@ -2,44 +2,35 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { BsCopy } from 'react-icons/bs'
 
+import { markPasswordAsUsed } from '@/helpers/localStorage.helper'
 import {
-    generateSKeyPassword,
-    verificationSKeyPassword,
-} from '@/utils/SKeyPassword'
-import { getCounterFromLocalStorage } from '@/helpers/localStorage.helper'
+    generateTOTPPassword,
+    verificationTOTPPassword,
+} from '@/utils/TOTPPassword'
 
-const SKeyAuthentication: React.FC = () => {
-    // Состояние для счетчика
-    const [counter, setCounter] = useState<number>(
-        getCounterFromLocalStorage() + 1
-    )
+import CountdownTimer from './CountdownTimer'
 
+// Секретный ключ
+const secret: string = import.meta.env.VITE_APP_API_URL || 'secret_key_12345'
+// Время жизни пароля в секундах
+export const lifeTime = 30
+
+const TOTPAuthentication: React.FC = () => {
     // Состояние для введенного пользователем пароля
     const [enteredPassword, setEnteredPassword] = useState<string>('')
 
     // Состояние для сгенерированного пароля
     const [generatedPassword, setGeneratedPassword] = useState<string>('')
 
-    // Состояние для введенного пользователем кода
-    const [enteredCode, setEnteredCode] = useState<string>('')
-
     // Состояние для отслеживания успешной аутентификации
     const [authenticated, setAuthenticated] = useState<boolean>(false)
 
     // Обработчик для генерации одноразового пароля
-    const handleGenerate = async (
-        e: React.FormEvent<HTMLFormElement>
-    ): Promise<void> => {
-        // Предотвращение перезагрузки страницы браузера
-        e.preventDefault()
-        // Если пароль не введен
-        if (!enteredCode) {
-            toast.error('Код для генерации не введен')
-            return
-        }
-
-        const newPassword = await generateSKeyPassword(enteredCode, counter)
-        setGeneratedPassword(newPassword)
+    const handleGenerate = async (): Promise<void> => {
+        // Генерируем одноразовый пароль с использованием секретного ключа и текущего времени
+        const oneTimePassword = await generateTOTPPassword(secret)
+        // Обновляем состояние сгенерированного пароля
+        setGeneratedPassword(oneTimePassword || '')
     }
 
     // Обработчик для проверки одноразового пароля
@@ -54,22 +45,20 @@ const SKeyAuthentication: React.FC = () => {
             return
         }
 
-        // Проверка пароля
-        const isValid = await verificationSKeyPassword(
-            enteredPassword,
-            enteredCode,
-            counter
-        )
+        // Валидность пароля
+        const isValid = await verificationTOTPPassword(secret, enteredPassword)
 
+        // Проверяем, валиден ли пароль
         if (isValid) {
-            // Обновление счетчика
-            setCounter((prev) => prev + 1)
+            // Если пароль верный, устанавливаем флаг аутентификации в true
             setAuthenticated(true)
+            // Помечаем пароль как использованный
+            await markPasswordAsUsed(enteredPassword)
             toast.success('Аутентификация успешна')
             return
         }
 
-        // Если пароль неверный, устанавливаем флаг аутентификации в false и выводим сообщение об ошибке
+        // Если не валиден, устанавливаем флаг аутентификации в false и выводим сообщение об ошибке
         setAuthenticated(false)
         toast.error('Неверный пароль')
         return
@@ -88,7 +77,8 @@ const SKeyAuthentication: React.FC = () => {
                 flex 
                 flex-col 
                 items-center 
-                gap-4
+                gap-5
+                rounded-lg 
                 h-full
             '
         >
@@ -100,106 +90,61 @@ const SKeyAuthentication: React.FC = () => {
                     text-neutral-200
                 '
             >
-                S/Key Аутентификация
+                TOTP Аутентификация
             </h1>
-            <form
-                className='flex gap-4 max-[580px]:flex-col'
-                onSubmit={handleGenerate}
-            >
-                <button
-                    type='submit'
-                    className='
-                        w-80
-                        rounded-full
-                        bg-green-500
-                        border-transparent
-                        px-3
-                        py-3
-                        disabled:cursor-not-allowed
-                        disabled:opacity-50
-                        text-black
-                        font-bold
-                        hover:opacity-75
-                        transition
-                    '
-                >
-                    Сгенерировать
-                </button>
-                <input
-                    type='text'
+            <div className='flex gap-4 max-[580px]:flex-col'>
+                <div
                     className='
                         flex
-                        w-full
-                        rounded-md
-                        bg-neutral-700
-                        border
-                        border-transparent
+                        items-center
+                        justify-between
                         px-3
-                        py-3
-                        text-sm
-                        text-neutral-200
-                        placeholder:text-neutral-400
-                        disabled:cursor-not-allowed
-                        disabled:opacity-50
-                        focus:outline-none
-                        focus:text-white
-                        transition
+                        py-4
+                        gap-1
+                        min-h-[60px]
+                        min-w-[235px]
+                        bg-slate-700
+                        rounded-md
+                        text-neutral-400
                     '
-                    placeholder='Введите код...'
-                    value={enteredCode}
-                    onChange={(e) => setEnteredCode(e.target.value)}
-                />
-            </form>
-            <div
-                className='
-                    flex
-                    items-center
-                    justify-between
-                    px-3
-                    py-4
-                    gap-1
-                    w-[350px]
-                    min-h-[60px]
-                    bg-slate-700
-                    rounded-md
-                    text-neutral-400
-                '
-            >
-                {generatedPassword && (
-                    <>
-                        <label>Пароль: </label>
-                        <span className='hover:text-white transition'>
-                            {generatedPassword}
-                        </span>
-                        <a
-                            data-tooltip-id='tooltip'
-                            data-tooltip-content='Скопировать'
-                        >
-                            <button
-                                className='w-fit h-fit'
-                                onClick={handleCopy}
+                >
+                    {generatedPassword && (
+                        <>
+                            <label>Пароль: </label>
+                            <span className='hover:text-white transition'>
+                                {generatedPassword}
+                            </span>
+                            <a
+                                data-tooltip-id='tooltip'
+                                data-tooltip-content='Скопировать'
                             >
-                                <BsCopy className='hover:text-white transition' />
-                            </button>
-                        </a>
-                    </>
-                )}
+                                <button
+                                    className='w-fit h-fit'
+                                    onClick={handleCopy}
+                                >
+                                    <BsCopy className='hover:text-white transition' />
+                                </button>
+                            </a>
+                        </>
+                    )}
+                </div>
             </div>
             {!authenticated ? (
                 <form
                     onSubmit={handleAuthenticate}
                     className='
                         flex
-                        max-[480px]:flex-col
-                        items-center
                         gap-4
+                        py-6
+                        max-[580px]:flex-col
+                        items-center
                     '
                 >
                     <input
                         type='text'
                         className='
                             flex
-                            w-80
+                            w-full
                             rounded-md
                             bg-neutral-700
                             border
@@ -275,8 +220,12 @@ const SKeyAuthentication: React.FC = () => {
                     </h2>
                 </>
             )}
+            <CountdownTimer
+                handleGenerate={handleGenerate}
+                lifeTime={lifeTime}
+            />
         </div>
     )
 }
 
-export default SKeyAuthentication
+export default TOTPAuthentication
