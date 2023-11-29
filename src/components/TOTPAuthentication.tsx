@@ -140,9 +140,10 @@ const TOTPAuthentication: React.FC = () => {
                     className='
                         flex
                         gap-4
-                        py-6
                         max-[580px]:flex-col
                         items-center
+                        h-[100px]
+                        mb-2
                     '
                 >
                     <input
