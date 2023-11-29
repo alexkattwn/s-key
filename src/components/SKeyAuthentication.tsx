@@ -249,7 +249,12 @@ const SKeyAuthentication: React.FC = () => {
                     </button>
                 </form>
             ) : (
-                <>
+                <motion.div
+                    className='flex flex-col items-center gap-3'
+                    initial='hidden'
+                    animate='visible'
+                    variants={containerVariants}
+                >
                     <button
                         onClick={() => {
                             setAuthenticated(!authenticated)
@@ -282,7 +287,7 @@ const SKeyAuthentication: React.FC = () => {
                     >
                         Вы успешно аутентифицированы!
                     </h2>
-                </>
+                </motion.div>
             )}
         </motion.div>
     )
