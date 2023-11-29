@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { BsCopy } from 'react-icons/bs'
+import { motion } from 'framer-motion'
 
 import { markPasswordAsUsed } from '@/helpers/localStorage.helper'
 import {
@@ -9,6 +10,7 @@ import {
 } from '@/utils/TOTPPassword'
 
 import CountdownTimer from './CountdownTimer'
+import { containerVariants } from '@/utils/animation'
 
 // Секретный ключ
 const secret: string = import.meta.env.VITE_APP_API_URL || 'secret_key_12345'
@@ -72,7 +74,7 @@ const TOTPAuthentication: React.FC = () => {
     }
 
     return (
-        <div
+        <motion.div
             className='
                 flex 
                 flex-col 
@@ -81,6 +83,9 @@ const TOTPAuthentication: React.FC = () => {
                 rounded-lg 
                 h-full
             '
+            initial='hidden'
+            animate='visible'
+            variants={containerVariants}
         >
             <h1
                 className='
@@ -224,7 +229,7 @@ const TOTPAuthentication: React.FC = () => {
                 handleGenerate={handleGenerate}
                 lifeTime={lifeTime}
             />
-        </div>
+        </motion.div>
     )
 }
 

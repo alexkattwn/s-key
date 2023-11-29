@@ -1,12 +1,16 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 
 import SKeyAuthentication from './components/SKeyAuthentication'
 import TOTPAuthentication from './components/TOTPAuthentication'
 
+import { containerVariants } from './utils/animation'
+
 const App = () => {
     const [isSKey, setIsSKey] = useState<boolean>(true)
+
     return (
-        <div
+        <motion.div
             className='
                 flex
                 flex-col
@@ -16,6 +20,9 @@ const App = () => {
                 h-[100vh]
                 w-full 
             '
+            initial='hidden'
+            animate='visible'
+            variants={containerVariants}
         >
             <button
                 className='   
@@ -38,7 +45,7 @@ const App = () => {
                 Переключить на {isSKey ? 'TOTP' : 'SKey'}
             </button>
             {isSKey ? <SKeyAuthentication /> : <TOTPAuthentication />}
-        </div>
+        </motion.div>
     )
 }
 

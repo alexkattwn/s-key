@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { BsCopy } from 'react-icons/bs'
+import { motion } from 'framer-motion'
 
 import {
     generateSKeyPassword,
     verificationSKeyPassword,
 } from '@/utils/SKeyPassword'
 import { getCounterFromLocalStorage } from '@/helpers/localStorage.helper'
+import { containerVariants } from '@/utils/animation'
 
 const SKeyAuthentication: React.FC = () => {
     // Состояние для счетчика
@@ -83,7 +85,7 @@ const SKeyAuthentication: React.FC = () => {
     }
 
     return (
-        <div
+        <motion.div
             className='
                 flex 
                 flex-col 
@@ -91,6 +93,9 @@ const SKeyAuthentication: React.FC = () => {
                 gap-4
                 h-full
             '
+            initial='hidden'
+            animate='visible'
+            variants={containerVariants}
         >
             <h1
                 className='
@@ -275,7 +280,7 @@ const SKeyAuthentication: React.FC = () => {
                     </h2>
                 </>
             )}
-        </div>
+        </motion.div>
     )
 }
 
