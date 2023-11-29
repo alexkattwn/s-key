@@ -7,7 +7,10 @@ import {
     generateSKeyPassword,
     verificationSKeyPassword,
 } from '@/utils/SKeyPassword'
-import { getCounterFromLocalStorage } from '@/helpers/localStorage.helper'
+import {
+    getCounterFromLocalStorage,
+    setCounterInLocalStorage,
+} from '@/helpers/localStorage.helper'
 import { containerVariants } from '@/utils/animation'
 
 const SKeyAuthentication: React.FC = () => {
@@ -68,6 +71,7 @@ const SKeyAuthentication: React.FC = () => {
             setCounter((prev) => prev + 1)
             setAuthenticated(true)
             toast.success('Аутентификация успешна')
+            setCounterInLocalStorage(counter)
             return
         }
 
