@@ -42,8 +42,9 @@ const SKeyAuthentication: React.FC = () => {
             toast.error('Код для генерации не введен')
             return
         }
-
+        // Генерация пароля
         const newPassword = await generateSKeyPassword(enteredCode, counter)
+        // Изменение состояния для сгенерированного пароля
         setGeneratedPassword(newPassword)
     }
 
@@ -71,6 +72,7 @@ const SKeyAuthentication: React.FC = () => {
             setCounter((prev) => prev + 1)
             setAuthenticated(true)
             toast.success('Аутентификация успешна')
+            // Сохранение счетчика в локальной памяти браузера
             setCounterInLocalStorage(counter)
             return
         }
