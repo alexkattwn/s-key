@@ -35,6 +35,8 @@ const SKeyAuthentication: React.FC = () => {
     const handleGenerate = async (
         e: React.FormEvent<HTMLFormElement>
     ): Promise<void> => {
+        const currentCounter = counter + 1
+        setCounter(currentCounter)
         // Предотвращение перезагрузки страницы браузера
         e.preventDefault()
         // Если пароль не введен
@@ -43,9 +45,13 @@ const SKeyAuthentication: React.FC = () => {
             return
         }
         // Генерация пароля
-        const newPassword = await generateSKeyPassword(enteredCode, counter)
+        const newPassword = await generateSKeyPassword(
+            enteredCode,
+            currentCounter
+        )
         // Изменение состояния для сгенерированного пароля
         setGeneratedPassword(newPassword)
+        //setCounterInLocalStorage(counter)
     }
 
     // Обработчик для проверки одноразового пароля
@@ -59,7 +65,6 @@ const SKeyAuthentication: React.FC = () => {
             toast.error('Пароль не введен')
             return
         }
-
         // Проверка пароля
         const isValid = await verificationSKeyPassword(
             enteredPassword,
