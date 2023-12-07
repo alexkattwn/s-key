@@ -15,9 +15,7 @@ import { containerVariants } from '@/utils/animation'
 
 const SKeyAuthentication: React.FC = () => {
     // Состояние для счетчика
-    const [counter, setCounter] = useState<number>(
-        getCounterFromLocalStorage() + 1
-    )
+    const [counter, setCounter] = useState<number>(getCounterFromLocalStorage())
 
     // Состояние для введенного пользователем пароля
     const [enteredPassword, setEnteredPassword] = useState<string>('')
@@ -51,7 +49,7 @@ const SKeyAuthentication: React.FC = () => {
         )
         // Изменение состояния для сгенерированного пароля
         setGeneratedPassword(newPassword)
-        //setCounterInLocalStorage(counter)
+        setCounterInLocalStorage(currentCounter)
     }
 
     // Обработчик для проверки одноразового пароля
